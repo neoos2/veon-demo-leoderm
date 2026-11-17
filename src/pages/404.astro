@@ -1,0 +1,16 @@
+---
+import Base from "../layouts/Base.astro";
+import BookButton from "../components/BookButton.astro";
+---
+<Base lang="uk" title="Сторінку не знайдено — ЛеоДерм" description="Такої сторінки немає. Поверніться на головну ЛеоДерм або зателефонуйте: +38 (097) 243-01-23.">
+  <section class="container notfound">
+    <h1>Такої сторінки немає</h1>
+    <p class="section-lede">Можливо, адреса змінилася. Головна сторінка має ціни, напрями й адреси обох клінік.</p>
+    <p><a class="text-link" href="./">На головну</a></p>
+    <BookButton />
+  </section>
+</Base>
+<style>
+  .notfound { display: grid; gap: var(--space-3); justify-items: start; padding-block: var(--space-15); }
+  .notfound h1 { font-size: var(--text-h1); text-wrap: balance; }
+</style>

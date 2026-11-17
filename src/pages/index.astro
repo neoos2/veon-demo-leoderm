@@ -1,0 +1,317 @@
+---
+import Base from "../layouts/Base.astro";
+import Section from "../components/Section.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import BookButton from "../components/BookButton.astro";
+import Frame from "../components/Frame.astro";
+import FutureLink from "../components/FutureLink.astro";
+import Icon from "../components/Icon.astro";
+import Pic from "../components/Pic.astro";
+import {
+  PHONE_HREF, PHONE_TEXT, EMAIL, HOURS, DOC_UA_URL,
+  clinics, mainConsultation, consultations, diagnostics, directions,
+  scales, apparatusRows, injectionRows, devices, socials,
+} from "../data/clinic";
+
+const NOTE = "Розділ у розробці";
+const H1 = "Медичний центр дерматології та естетичної медицини — дві клініки у Львові";
+// "—" stays glued to the previous word (no line may start with a dash); the text itself keeps a normal space.
+const h1Words = H1.split(" ").reduce<string[]>((acc, w) => { if (w === "—" && acc.length) acc[acc.length - 1] += " —"; else acc.push(w); return acc; }, []);
+const title = "ЛеоДерм — дерматологія та косметологія у Львові";
+const description = "Дерматолог, трихолог, апаратна та ін'єкційна косметологія. Консультація дерматолога — 1100 грн. Дві клініки: Сихів і біля вокзалу. +38 (097) 243-01-23";
+
+const ld = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization", "@id": "#org", name: "ЛеоДерм", legalName: "ТОВ «ЛЕОДЕРМ-УКРАЇНА»",
+      telephone: "+380972430123", email: EMAIL,
+      sameAs: Object.values(socials).map((s) => s.url),
+    },
+    ...clinics.map((c) => ({
+      "@type": "MedicalClinic", name: `ЛеоДерм, ${c.street}`, telephone: "+380972430123",
+      address: { "@type": "PostalAddress", streetAddress: c.street, addressLocality: "Львів", addressCountry: "UA" },
+      openingHours: "Mo-Sa 09:00-20:00", parentOrganization: { "@id": "#org" },
+    })),
+  ],
+};
+---
+<Base lang="uk" title={title} description={description}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <Header slot="header" />
+
+  <Section id="hero" rec="UX-R001,MA-R004" class="hero">
+    <div class="container hero__grid">
+      <div class="hero__text">
+        <h1 class="hero__title" data-lines data-rec="SE-R001">{h1Words.map((w, i) => <><span class="w">{w}</span>{i < h1Words.length - 1 ? " " : ""}</>)}</h1>
+        <script is:inline>(function(){var h=document.querySelector("[data-lines]");if(!h)return;var t=null,l=-1;h.querySelectorAll(".w").forEach(function(w){var y=w.offsetTop;if(y!==t){t=y;l++;}w.style.setProperty("--line",l);});h.classList.add("is-split");})();</script>
+        <p class="hero__lede">Дерматологія, трихологія, апаратна та ін'єкційна косметологія.</p>
+      </div>
+      <div class="hero__aside">
+        <BookButton full />
+        <a class="hero__phone" href={PHONE_HREF}>{PHONE_TEXT}</a>
+        <ul class="hero__addr" aria-label="Адреси клінік">
+          {clinics.map((c) => <li><span class="hero__street">{c.street}</span><span class="hero__landmark">{c.landmark.replace("Сихівський район, ", "")}</span></li>)}
+        </ul>
+        <a class="text-link hero__more" href="#directions">Обрати напрям</a>
+      </div>
+    </div>
+    <div class="container">
+      <figure class="hero__figure">
+        <Frame>
+        <Pic name="dermatoscopy" widths={[640, 960, 1440, 1920]} w={1920} h={1080} eager
+          sizes="(min-width: 1304px) 1240px, calc(100vw - 40px)"
+          alt="Цифрова дерматоскопія: родинки на спині позначені на знімку, поруч екран FotoFinder з картою новоутворів" />
+        </Frame>
+        <figcaption>Цифрова дерматоскопія FotoFinder: <strong>1600 грн</strong> за 1–3 новоутвори</figcaption>
+      </figure>
+    </div>
+  </Section>
+
+  <Section id="start" rec="WA-R001" class="start">
+    <div class="container start__grid">
+      <div class="start__lead">
+        <h2>З чого почати</h2>
+        <p class="section-lede">Прийом лікаря і діагностика шкіри. Ціну видно до дзвінка.</p>
+        <Frame class="start__main">
+          <p class="start__main-name">{mainConsultation.name}</p>
+          <p class="start__main-price"><span class="num">{mainConsultation.price}</span> грн</p>
+        </Frame>
+        <div class="start__diag">
+          <h3>Діагностика</h3>
+          <ul class="price-list">
+            {diagnostics.map((r) => <li><span>{r.name}</span><span class="price-list__price"><span class="num">{r.price}</span> грн</span></li>)}
+          </ul>
+        </div>
+      </div>
+      <div class="start__lists">
+        <div>
+          <h3>Консультації</h3>
+          <ul class="price-list">
+            {consultations.map((r) => <li><span>{r.name}</span><span class="price-list__price"><span class="num">{r.price}</span> грн</span></li>)}
+          </ul>
+        </div>
+        <BookButton />
+      </div>
+    </div>
+  </Section>
+
+  <Section id="directions" rec="UX-R005,UX-R006" class="directions">
+    <div class="container">
+      <div class="section-head">
+        <h2>Напрями</h2>
+        <p class="section-lede">Вісім напрямів у двох клініках. Окремі сторінки з процедурами з'являться в повній версії сайту.</p>
+      </div>
+      <ul class="dir-index">
+        {directions.map((d) => (
+          <li>
+            <FutureLink note={NOTE} class="dir">
+              <span class="dir__thumb">
+                <Pic name={d.img} widths={d.widths} w={350} h={250} sizes="(min-width: 768px) 140px, 45vw" alt={d.alt} />
+              </span>
+              <span class="dir__text">
+                <span class="dir__name">{d.name}</span>
+                {d.detail && <span class="dir__detail">{d.detail}</span>}
+              </span>
+            </FutureLink>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Section>
+
+  <Section id="prices" class="prices">
+    <div class="container">
+      <div class="section-head section-head--split">
+        <h2>Ціни-орієнтири</h2>
+        <div class="tabs" role="tablist" aria-label="Група процедур" data-tabs>
+          <button type="button" role="tab" id="tab-apparatus" aria-controls="panel-apparatus" aria-selected="true" class="tabs__tab">Апаратна</button>
+          <button type="button" role="tab" id="tab-injections" aria-controls="panel-injections" aria-selected="false" tabindex="-1" class="tabs__tab">Ін'єкції</button>
+        </div>
+      </div>
+
+      <div class="panels">
+        <div class="panel is-active" role="tabpanel" id="panel-apparatus" aria-labelledby="tab-apparatus" data-panel>
+          <h3 class="panel__nojs">Апаратна косметологія</h3>
+          <div class="scales">
+            {scales.map((s) => (
+              <div class="scale">
+                <h4 class="scale__name">{s.name}{s.device !== s.name && <span class="scale__device"> {s.device}</span>}</h4>
+                <ol class="scale__steps" style={`--n:${s.steps.length}`}>
+                  {s.steps.map((st) => <li><span class="scale__zone">{st.zone}</span><span class="scale__price">{s.from && "від "}<span class="num">{st.price}</span> грн</span></li>)}
+                </ol>
+              </div>
+            ))}
+            <div class="scale scale--list">
+              <h4 class="scale__name">Лазер та IPL</h4>
+              <ul class="price-list">
+                {apparatusRows.map((r) => <li><span>{r.name}</span><span class="price-list__price"><span class="num">{r.price}</span> грн</span></li>)}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="panel" role="tabpanel" id="panel-injections" aria-labelledby="tab-injections" data-panel>
+          <h3 class="panel__nojs">Ін'єкційна косметологія</h3>
+          <div class="scales">
+            <div class="scale scale--list">
+              <h4 class="scale__name">Препарати</h4>
+              <ul class="price-list price-list--big">
+                {injectionRows.map((r) => <li><span>{r.name}</span><span class="price-list__price"><span class="num">{r.price}</span> {r.unit ?? "грн"}</span></li>)}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prices__foot">
+        <BookButton />
+        <FutureLink note={NOTE}>Усі ціни</FutureLink>
+        <span data-rec="UX-R004"><FutureLink note={NOTE}>Розрахувати вартість</FutureLink></span>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="equipment" class="equipment on-deep">
+    <div class="container">
+      <div class="section-head section-head--split">
+        <h2>Обладнання</h2>
+        <p class="section-lede">Апарати, які клініка називає на своєму сайті. Під назвою процедура і ціна з прайсу.</p>
+      </div>
+      <ul class="wall">
+        {devices.map((d) => (
+          <li class:list={["wall__item", { "has-caption": d.caption }]}>
+            <span class="wall__name">{d.name}</span>
+            {d.caption && <span class="wall__caption">{d.caption}</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Section>
+
+  <Section id="trust" rec="UX-R005,WA-R002" class="trust">
+    <div class="container trust__grid">
+      <div class="trust__head">
+        <h2>Лікарі та відгуки</h2>
+        <p class="section-lede">Оцінка пацієнтів на незалежному сервісі запису до лікарів.</p>
+      </div>
+      <div class="trust__rating">
+        <p class="trust__score"><span class="num">5,0</span><span class="visually-hidden"> з 5, рейтинг пацієнтів</span></p>
+        <p class="trust__source">
+          <a href={DOC_UA_URL} target="_blank" rel="noopener">106 відгуків на DOC.UA<Icon name="external" size={16} /></a>
+        </p>
+      </div>
+      <div class="trust__team">
+        <p class="trust__team-num">понад 35</p>
+        <p class="trust__team-text">фахівців у команді, за даними клініки</p>
+        <ul class="trust__links">
+          <li><FutureLink note={NOTE}>Лікарі</FutureLink></li>
+          <li><FutureLink note={NOTE}>Фото до та після</FutureLink></li>
+        </ul>
+      </div>
+      <Frame tag="figure" class="trust__photo">
+        <Pic name="staff" widths={[550]} w={550} h={650} sizes="(min-width: 1024px) 360px, 70vw" alt="Фахівчиня ЛеоДерм у формі клініки на тлі знака-хреста" />
+      </Frame>
+    </div>
+  </Section>
+
+  <Section id="clinics" class="clinics">
+    <div class="container">
+      <div class="section-head section-head--split">
+        <h2>Клініки</h2>
+        <div class="switch" role="tablist" aria-label="Оберіть клініку" data-switch>
+          {clinics.map((c, i) => <button type="button" role="tab" class="switch__btn" id={`sw-${c.id}`} aria-controls={`clinic-${c.id}`} aria-selected={i === 0 ? "true" : "false"} tabindex={i === 0 ? undefined : "-1"}>{c.short}</button>)}
+        </div>
+      </div>
+      <div class="clinic-grid">
+        {clinics.map((c, i) => (
+          <article class:list={["clinic", { "is-active": i === 0 }]} id={`clinic-${c.id}`} data-clinic>
+            <Frame class="clinic__photo">
+              <Pic name={c.photo} widths={[600, 900]} w={900} h={600} sizes="(min-width: 1024px) 600px, calc(100vw - 40px)" alt={c.alt} />
+            </Frame>
+            <h3 class="clinic__street">{c.street}</h3>
+            <p class="clinic__landmark">{c.landmark}{c.note && <><br />{c.note}</>}</p>
+            <p class="clinic__hours">{HOURS}</p>
+            <div class="clinic__actions">
+              <a class="text-link text-link--icon" href={c.map} target="_blank" rel="noopener"><Icon name="route" />Прокласти маршрут</a>
+              <a class="text-link text-link--icon" href={PHONE_HREF}><Icon name="phone" />Подзвонити</a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </Section>
+
+  <Section id="media" class="media" rec="S-R011">
+    <div class="container media__grid">
+      <div>
+        <h2>Лікарі пояснюють</h2>
+        <p class="section-lede">Відео й короткі розбори від лікарів клініки. Для тих, хто ще обирає.</p>
+        <FutureLink note={NOTE} class="media__blog">Блог клініки</FutureLink>
+      </div>
+      <ul class="media__list">
+        {[socials.youtube, socials.instagram, socials.tiktok].map((s) => (
+          <li>
+            <a href={s.url} target="_blank" rel="noopener" class="media__link">
+              <span class="media__name">{s.label}</span>
+              <span class="media__count">{s.count}</span>
+              <Icon name="external" size={20} />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Section>
+
+  <Section id="contacts" class="contacts on-deep">
+    <div class="container contacts__grid">
+      <div class="contacts__main">
+        <h2>Записатися</h2>
+        <p class="section-lede">Один номер для обох клінік.</p>
+        <a class="contacts__phone" href={PHONE_HREF}>{PHONE_TEXT}</a>
+        <BookButton tone="deep" />
+      </div>
+      <div class="contacts__side">
+        <ul class="contacts__addr">
+          {clinics.map((c) => <li><span class="contacts__street">{c.street}</span><span>{c.landmark}</span></li>)}
+        </ul>
+        <p>{HOURS}</p>
+        <p><a class="text-link text-link--icon" href={`mailto:${EMAIL}`}><Icon name="mail" />{EMAIL}</a></p>
+      </div>
+    </div>
+  </Section>
+
+  <Footer slot="footer" />
+</Base>
+
+<script>
+  // Tabs: price groups and the clinic switch (390). Without JS both panels and both clinics stay visible.
+  function tabs(root: HTMLElement, tabSel: string, panelFor: (t: HTMLElement) => HTMLElement | null) {
+    const list = Array.from(root.querySelectorAll<HTMLElement>(tabSel));
+    const select = (t: HTMLElement, focus = false) => {
+      list.forEach((x) => {
+        const on = x === t;
+        x.setAttribute("aria-selected", String(on));
+        x.tabIndex = on ? 0 : -1;
+        panelFor(x)?.classList.toggle("is-active", on);
+      });
+      if (focus) t.focus();
+    };
+    list.forEach((t, i) => {
+      t.addEventListener("click", () => select(t));
+      t.addEventListener("keydown", (e) => {
+        const k = (e as KeyboardEvent).key;
+        if (k === "ArrowRight" || k === "ArrowLeft") {
+          e.preventDefault();
+          const n = list[(i + (k === "ArrowRight" ? 1 : list.length - 1)) % list.length];
+          if (n) select(n, true);
+        }
+      });
+    });
+  }
+  const byControls = (t: HTMLElement) => document.getElementById(t.getAttribute("aria-controls") ?? "");
+  const pt = document.querySelector<HTMLElement>("[data-tabs]");
+  if (pt) tabs(pt, "[role=tab]", byControls);
+  const sw = document.querySelector<HTMLElement>("[data-switch]");
+  if (sw) tabs(sw, "[role=tab]", byControls);
+</script>

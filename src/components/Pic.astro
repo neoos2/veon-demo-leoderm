@@ -1,0 +1,9 @@
+---
+// Local WebP with srcset; paths are relative (the demo is served from a sub-path).
+interface Props { name: string; widths: number[]; w: number; h: number; alt: string; sizes: string; eager?: boolean; class?: string; }
+const { name, widths, w, h, alt, sizes, eager = false, class: cls } = Astro.props;
+const srcset = widths.map((x) => `img/${name}-${x}.webp ${x}w`).join(", ");
+const src = `img/${name}-${widths[widths.length - 1]}.webp`;
+---
+<img class={cls} src={src} srcset={srcset} sizes={sizes} width={w} height={h} alt={alt}
+  loading={eager ? "eager" : "lazy"} decoding={eager ? "sync" : "async"} fetchpriority={eager ? "high" : undefined} />

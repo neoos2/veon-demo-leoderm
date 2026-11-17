@@ -1,0 +1,12 @@
+---
+// Primary booking action: every «Записатися» calls the single clinic phone (no online form in the demo).
+// The cross from the ЛеоДерм sign marks booking points only.
+interface Props { label?: string; tone?: "light" | "deep"; full?: boolean; class?: string; rec?: string; }
+const { label = "Записатися", tone = "light", full = false, class: cls, rec } = Astro.props;
+---
+<a class:list={["book", `book--${tone}`, { "book--full": full }, cls]} href="tel:+380972430123" data-rec={rec}>
+  <svg class="book__cross" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+    <path d="M8 2v12M2 8h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" />
+  </svg>
+  <span>{label}</span>
+</a>

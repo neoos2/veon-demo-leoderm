@@ -1,0 +1,41 @@
+/* Motion (design/concept.md §8 «Движение»): five effects, transform / opacity only, CLS 0.
+   Everything is visible without JS; prefers-reduced-motion turns all of it off (bottom of this file). */
+
+/* 1. Corner frames converge around the fact (photo itself is visible at once; only the corners move) */
+.frame::before, .frame::after { transition: transform 700ms var(--ease-out), opacity 700ms var(--ease-out); }
+.js .frame:not(.is-visible)::before { opacity: 0; transform: translate(-14px, -14px); }
+.js .frame:not(.is-visible)::after { opacity: 0; transform: translate(14px, 14px); }
+@media (max-width: 767.98px) { .frame::before, .frame::after { transition-duration: 500ms; } }
+
+/* 2. H1 enters line by line: text is in the DOM and readable from the first frame (opacity starts at .6) */
+@keyframes h1-in { from { opacity: .6; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.js .hero__title.is-split .w { animation: h1-in 600ms var(--ease-out) both; animation-delay: calc(var(--line, 0) * 80ms); }
+@media (max-width: 767.98px) { .js .hero__title.is-split .w { animation-delay: 0ms; } }
+
+/* 3. Price tabs: cross-fade in one grid cell, no height jump */
+.js .panel { transition: opacity 250ms var(--ease-out), transform 250ms var(--ease-out), visibility 0s linear 0s; }
+.js .panel:not(.is-active) { transform: translateY(8px); transition: opacity 250ms var(--ease-out), transform 250ms var(--ease-out), visibility 0s linear 250ms; }
+
+/* 4. Booking button: the cross steps toward the frame corner, press scales (button rules in site.css) */
+@media (hover: hover) and (pointer: fine) {
+  .book:hover .book__cross { transform: translate(-2px, -2px); }
+}
+
+/* 5. Equipment: lime line under a device name and its price line brightens (captions always visible) */
+.wall__item.has-caption::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--color-accent); transform: scaleX(0); transform-origin: left; transition: transform 220ms var(--ease-out); }
+.wall__caption { transition: color 220ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .wall__item.has-caption:hover::after { transform: scaleX(1); }
+  .wall__item.has-caption:hover .wall__caption { color: var(--color-on-deep); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame::before, .frame::after { transition: none; }
+  .js .frame:not(.is-visible)::before, .js .frame:not(.is-visible)::after { opacity: 1; transform: none; }
+  .js .hero__title.is-split .w { animation: none; }
+  .js .panel, .js .panel:not(.is-active) { transition: none; transform: none; }
+  .book, .book__cross, .book:active, .tabs__tab:active, .switch__btn:active { transition: none; transform: none; }
+  .book:hover .book__cross { transform: none; }
+  .wall__item.has-caption::after { transition: none; }
+  .media__link .icon, .media__link:hover .icon { transition: none; transform: none; }
+}

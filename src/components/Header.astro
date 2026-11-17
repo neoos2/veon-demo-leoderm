@@ -1,0 +1,82 @@
+---
+import BookButton from "./BookButton.astro";
+import FutureLink from "./FutureLink.astro";
+import Icon from "./Icon.astro";
+import { PHONE_HREF, PHONE_TEXT } from "../data/clinic";
+
+const nav = [
+  { href: "#directions", label: "Напрями" },
+  { href: "#prices", label: "Ціни" },
+  { href: "#trust", label: "Лікарі та відгуки" },
+  { href: "#clinics", label: "Клініки" },
+  { href: "#contacts", label: "Контакти" },
+];
+const NOTE = "Розділ у розробці";
+const future = ["Лікарі", "Фото до та після", "Акції", "Блог"];
+---
+<header class="site-header" data-header data-rec="UX-R002,UX-R004">
+  <div class="container site-header__row">
+    <a class="site-header__logo" href="#top" aria-label="ЛеоДерм, на початок сторінки">
+      <img src="logo.svg" width="214" height="41" alt="ЛеоДерм" />
+    </a>
+
+    <nav class="site-nav" aria-label="Головне меню">
+      <ul>
+        {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <FutureLink note={NOTE} class="site-header__lang">EN</FutureLink>
+      <a class="site-header__phone" href={PHONE_HREF}>
+        <Icon name="phone" size={20} />
+        <span class="site-header__phone-text">{PHONE_TEXT}</span>
+        <span class="visually-hidden site-header__phone-sr">Подзвонити {PHONE_TEXT}</span>
+      </a>
+      <BookButton class="site-header__book" />
+
+      <details class="menu" data-menu>
+        <summary class="menu__toggle" aria-label="Меню">
+          <span class="menu__icon menu__icon--open"><Icon name="menu" size={24} /></span>
+          <span class="menu__icon menu__icon--close"><Icon name="close" size={24} /></span>
+        </summary>
+        <div class="menu__panel">
+          <nav aria-label="Меню для телефона">
+            <ul class="menu__list">
+              {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+            </ul>
+          </nav>
+          <ul class="menu__future">
+            {future.map((f) => <li><FutureLink note={NOTE}>{f}</FutureLink></li>)}
+            <li><FutureLink note={NOTE}>English</FutureLink></li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<div class="bottom-bar" data-rec="UX-R002">
+  <a class="bottom-bar__book" href={PHONE_HREF}>
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M8 2v12M2 8h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" /></svg>
+    Записатися
+  </a>
+  <a class="bottom-bar__route" href="#clinics"><Icon name="route" size={20} />Маршрут</a>
+</div>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  const menu = document.querySelector<HTMLDetailsElement>("[data-menu]");
+  if (header) {
+    const onScroll = () => header.classList.toggle("is-compact", window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+  if (menu) {
+    menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => { menu.open = false; }));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu.open) { menu.open = false; menu.querySelector("summary")?.focus(); }
+    });
+    document.addEventListener("click", (e) => { if (menu.open && !menu.contains(e.target as Node)) menu.open = false; });
+  }
+</script>

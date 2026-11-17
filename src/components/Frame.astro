@@ -1,0 +1,9 @@
+---
+// Corner frame from the ЛеоДерм sign: two offset corners (lime top-left, olive bottom-right).
+// Used only around real photos and the main fact of a block.
+interface Props { class?: string; tag?: "div" | "figure"; }
+const { class: cls, tag: Tag = "div" } = Astro.props;
+---
+<Tag class:list={["frame", cls]} data-frame>
+  <slot />
+</Tag>

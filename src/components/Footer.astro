@@ -1,0 +1,50 @@
+---
+import FutureLink from "./FutureLink.astro";
+import { clinics, EDRPOU, EMAIL, HOURS, LEGAL, PHONE_HREF, PHONE_TEXT, socials } from "../data/clinic";
+const NOTE = "Розділ у розробці";
+const year = 2026;
+---
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <a href="#top" class="site-footer__logo" aria-label="ЛеоДерм, на початок сторінки">
+        <img src="logo.svg" width="214" height="41" alt="ЛеоДерм" />
+      </a>
+      <p>Медичний центр дерматології та естетичної медицини у Львові.</p>
+    </div>
+
+    <div>
+      <h2 class="site-footer__title">Клініки</h2>
+      <ul class="site-footer__list">
+        {clinics.map((c) => <li><a href={c.map} target="_blank" rel="noopener">{c.street}</a></li>)}
+        <li class="site-footer__muted">{HOURS}</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="site-footer__title">Зв'язок</h2>
+      <ul class="site-footer__list">
+        <li><a href={PHONE_HREF}>{PHONE_TEXT}</a></li>
+        <li><a href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
+      </ul>
+      <h2 class="site-footer__title site-footer__title--gap">Соцмережі</h2>
+      <ul class="site-footer__list site-footer__list--inline">
+        {Object.values(socials).map((s) => <li><a href={s.url} target="_blank" rel="noopener">{s.label}</a></li>)}
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="site-footer__title">Пацієнтам</h2>
+      <ul class="site-footer__list">
+        <li><FutureLink note={NOTE}>Акції</FutureLink></li>
+        <li><FutureLink note={NOTE}>Блог</FutureLink></li>
+        <li><FutureLink note={NOTE}>Публічний договір</FutureLink></li>
+        <li><FutureLink note={NOTE}>Політика конфіденційності</FutureLink></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container site-footer__legal">
+    <p>{LEGAL}, ЄДРПОУ {EDRPOU}</p>
+    <p>© {year} ЛеоДерм</p>
+  </div>
+</footer>
